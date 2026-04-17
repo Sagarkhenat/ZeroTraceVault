@@ -1,2 +1,83 @@
 // For information on how to create your own theme, please refer to:
 // https://ionicframework.com/docs/theming/
+
+:root {
+  /* LIGHT MODE - Crisp, Trustworthy, Professional */
+  --ion-color-primary: #0284c7; /* Trustworthy Cobalt */
+  --ion-color-primary-rgb: 2,132,199;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255,255,255;
+  --ion-color-primary-shade: #0274af;
+  --ion-color-primary-tint: #1b90cd;
+
+  --ion-color-secondary: #0f172a;
+  --ion-color-secondary-rgb: 15,23,42;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255,255,255;
+  --ion-color-secondary-shade: #0d1425;
+  --ion-color-secondary-tint: #272e3f;
+
+  --ion-color-success: #10b981; /* Secure Green */
+  --ion-color-warning: #f59e0b;
+  --ion-color-danger:  #ef4444;
+
+  --ion-background-color: #f8fafc; /* Very light slate, softer than white */
+  --ion-text-color: #0f172a;
+}
+
+/* DARK MODE - Obsidian & Secure Cyan */
+@media (prefers-color-scheme: dark) {
+  /*
+   * Dark Colors
+   * -------------------------------------------
+   */
+  body {
+    --ion-color-primary: #06b6d4; /* Vibrant Secure Cyan */
+    --ion-color-primary-rgb: 6,182,212;
+    --ion-color-primary-contrast: #000000;
+    --ion-color-primary-contrast-rgb: 0,0,0;
+    --ion-color-primary-shade: #05a0ba;
+    --ion-color-primary-tint: #1fbdd8;
+
+    --ion-color-secondary: #334155;
+    --ion-color-secondary-rgb: 51,65,85;
+    --ion-color-secondary-contrast: #ffffff;
+    --ion-color-secondary-contrast-rgb: 255,255,255;
+    --ion-color-secondary-shade: #2d394b;
+    --ion-color-secondary-tint: #475466;
+
+    --ion-color-success: #34d399;
+    --ion-color-warning: #fbbf24;
+    --ion-color-danger:  #f87171;
+
+    /* Deep Obsidian Backgrounds */
+    --ion-background-color: #020617; /* Deepest Slate */
+    --ion-background-color-rgb: 2,6,23;
+    --ion-text-color: #f8fafc;
+    --ion-text-color-rgb: 248,250,252;
+
+    --ion-color-step-50: #0e1222;
+    --ion-color-step-100: #1a1e2e;
+    --ion-color-step-150: #262a39;
+    --ion-color-step-200: #323645;
+    --ion-color-step-250: #3e4250;
+    --ion-color-step-300: #4a4e5c;
+    --ion-color-step-350: #575a67;
+    --ion-color-step-400: #636673;
+    --ion-color-step-450: #6f727e;
+    --ion-color-step-500: #7b7e8a;
+    --ion-color-step-550: #878a95;
+    --ion-color-step-600: #9396a1;
+    --ion-color-step-650: #9f102ac;
+    --ion-color-step-700: #acafb8;
+    --ion-color-step-750: #b8bbc3;
+    --ion-color-step-800: #c4c7cf;
+    --ion-color-step-850: #d0d3da;
+    --ion-color-step-900: #dcdee6;
+    --ion-color-step-950: #e8eaf1;
+
+    /* Card and Item adjustments for Dark Mode */
+    --ion-item-background: #0f172a;
+    --ion-card-background: #0f172a;
+  }
+}
