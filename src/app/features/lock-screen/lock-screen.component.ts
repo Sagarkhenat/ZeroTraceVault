@@ -1,92 +1,26 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { IonContent, IonButton, IonIcon, AlertController,ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { fingerPrintOutline, lockClosedOutline } from 'ionicons/icons';
 import { AuthState } from 'src/app/core/state/auth-state';
 import { BiometricService } from '../../core/services/biometric.service';
-import { NgIf } from '@angular/common';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-lock-screen',
-  template: `
-    <ion-content class="ion-no-padding">
-      <div class="safe-padding lock-container">
-
-        <div class="header-section">
-          <ion-icon name="lock-closed-outline" class="vault-icon"></ion-icon>
-          <h1>ZeroTrace Vault</h1>
-          <p>Encrypted local storage.</p>
-        </div>
-
-        <div class="action-section">
-          <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
-
-          <ion-button expand="block" class="auth-button" (click)="triggerAuth()">
-            <ion-icon slot="start" name="fingerprint-outline"></ion-icon>
-            Unlock Vault
-          </ion-button>
-        </div>
-
-      </div>
-    </ion-content>
-  `,
-  styles: [`
-    .lock-container {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--ion-background-color);
-      padding: 40px 20px;
-    }
-    .header-section {
-      text-align: center;
-      margin-top: 20vh;
-    }
-    .vault-icon {
-      font-size: 80px;
-      color: var(--ion-color-primary);
-      margin-bottom: 20px;
-    }
-    h1 {
-      font-weight: 700;
-      color: var(--ion-text-color);
-    }
-    p {
-      color: var(--ion-color-step-500);
-    }
-    .action-section {
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 5vh;
-    }
-    .auth-button {
-      --border-radius: 12px;
-      --padding-top: 18px;
-      --padding-bottom: 18px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-    .error-text {
-      color: var(--ion-color-danger);
-      text-align: center;
-      font-size: 14px;
-      margin-bottom: 15px;
-    }
-  `],
+  templateUrl: 'lock-screen.component.html',
+  styleUrls: ['lock-screen.component.scss'],
   standalone: true,
-  imports: [IonicModule, NgIf]
+  imports: [IonicModule]
 })
 export class LockScreenComponent implements OnInit {
-  private authState = inject(AuthState);
-  private biometricService = inject(BiometricService);
-  private router = inject(Router);
 
   errorMessage = '';
 
-  constructor() {
+  constructor(private authState: AuthState,private authService: AuthService, private biometricService: BiometricService, private router: Router,
+    private alertController: AlertController,private toastController: ToastController) {
     addIcons({ fingerPrintOutline, lockClosedOutline });
   }
 
@@ -111,4 +45,78 @@ export class LockScreenComponent implements OnInit {
       this.errorMessage = 'Authentication failed. Please try again.';
     }
   }
+
+  async useFallbackPin() {
+
+    const hasPin = await this.authService.hasPinSet();
+    console.log('Fallback PIN condition triggered, allow user to enter 4 digit PIN value :::', hasPin);
+    if (!hasPin) {
+      await this.presentPinSetup();
+    } else {
+      await this.presentPinEntry();
+    }
+  }
+
+    async presentPinSetup() {
+    const alert = await this.alertController.create({
+      header: 'Set Fallback PIN',
+      message: 'Create a 4-digit PIN for when biometrics are unavailable.',
+      inputs: [
+        { name: 'pin', type: 'password', placeholder: 'Enter PIN', attributes: { maxlength: 4 } }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Save & Unlock',
+          handler: async (data) => {
+            if (data.pin && data.pin.length === 4) {
+              await this.authService.setPin(data.pin);
+              this.authService.unlock();
+              this.router.navigate(['/tabs'], { replaceUrl: true }); // Prevent back navigation to lock screen
+            }
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async presentPinEntry() {
+    const alert = await this.alertController.create({
+      header: 'Enter PIN',
+      inputs: [
+        { name: 'pin', type: 'password', placeholder: 'Enter your 4-digit PIN', attributes: { maxlength: 4 } }
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Unlock',
+          handler: async (data) => {
+            const isValid = await this.authService.verifyPin(data.pin);
+            if (isValid) {
+              this.authService.unlock();
+              this.router.navigate(['/tabs'], { replaceUrl: true }); // Prevent back navigation to lock screen
+            } else {
+              console.error('Invalid PIN entered');
+              this.showToast('Invalid PIN entered.', 'danger');
+            }
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 3000,
+      color: color,
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
 }
