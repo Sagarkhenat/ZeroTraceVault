@@ -1,0 +1,29 @@
+.empty-state {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--ion-color-step-500);
+}
+.empty-state ion-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+.preview-state {
+    text-align: center;
+    padding-top: 20px;
+}
+.secure-preview {
+    width: 100%;
+    border-radius: 12px;
+    border: 2px solid var(--ion-color-primary);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+ion-fab-button {
+    --background: var(--ion-color-primary);
+    margin-bottom: 16px;
+    margin-right: 16px;
+}

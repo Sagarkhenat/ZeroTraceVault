@@ -35,3 +35,42 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/** --------------------------------------------------
+ * SAFE AREA UTILITIES (Notches & Home Indicators)
+ * --------------------------------------------------
+ */
+
+/* Use this to push content inward (Best for general wrappers) */
+.safe-padding {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Use this if you specifically only need vertical protection */
+.safe-padding-y {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/** FOR ABSOLUTE POSITIONED ELEMENTS
+ * (Like custom modals, lock screens, or floating action buttons)
+ */
+.safe-absolute-top {
+  top: env(safe-area-inset-top, 0px);
+}
+
+.safe-absolute-bottom {
+  bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/** IONIC OVERRIDES
+ * Sometimes custom headers need forced minimum heights
+ * to account for the notch dynamically.
+ */
+.custom-secure-header {
+  min-height: calc(56px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+}

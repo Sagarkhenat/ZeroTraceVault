@@ -1,0 +1,30 @@
+<ion-content class="ion-no-padding">
+  <div class="safe-padding lock-container">
+
+    <div class="header-section">
+      <ion-icon name="lock-closed-outline" class="vault-icon"></ion-icon>
+      <h1>ZeroTrace Vault</h1>
+      <p>Encrypted local storage.</p>
+    </div>
+
+    <div class="action-section">
+      <ion-button expand="block" class="auth-button" (click)="triggerAuth()">
+        <ion-icon slot="start" name="finger-print-outline"></ion-icon>
+        Unlock Vault
+      </ion-button>
+
+      @if(errorMessage){
+        <!-- <p  class="error-text">{{ errorMessage }}</p> -->
+        <div class="error-state-fallback">
+          <p class="error-text">Biometrics unavailable.</p>
+          <ion-button expand="block" fill="outline" (click)="useFallbackPin()">
+            Use PIN
+          </ion-button>
+        </div>
+      }@else{
+
+      }
+    </div>
+
+  </div>
+</ion-content>
