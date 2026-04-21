@@ -11,6 +11,7 @@ export const routes: Routes = [
     path: 'lock',
     loadComponent: () => import('./features/lock-screen/lock-screen.component').then(m => m.LockScreenComponent),
   },
+  //any URL starting with /tabs should load the tabs.routes.ts file
   {
     path: 'tabs',
     canActivate: [authGuard], // The Security Gate is applied here

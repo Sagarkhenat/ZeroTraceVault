@@ -1,29 +1,122 @@
+.vault-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--ion-background-color);
+}
+
 .empty-state {
-    height: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--ion-color-step-500);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+
+  .empty-text {
+    color: var(--ion-color-step-400);
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .status-text {
+    color: var(--ion-color-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
 }
-.empty-state ion-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
+
+.fab-padding {
+  /* Push the FAB up slightly so it doesn't sit exactly on the bottom edge */
+  margin-bottom: 24px;
+  margin-right: 16px;
+
+  ion-fab-button {
+    /* Slightly enlarge the FAB for a premium feel */
+    --box-shadow: 0 4px 16px rgba(var(--ion-color-primary-rgb), 0.4);
+    width: 64px;
+    height: 64px;
+
+    ion-icon {
+      font-size: 32px;
+    }
+  }
 }
-.preview-state {
-    text-align: center;
-    padding-top: 20px;
+
+/* Simple breathing animation for the processing text */
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
-.secure-preview {
-    width: 100%;
-    border-radius: 12px;
-    border: 2px solid var(--ion-color-primary);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+
+.vault-header {
+  width: 100%;
+  padding: 24px 16px 8px;
+
+  h2 {
+    color: var(--ion-text-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+  }
+  p {
+    color: var(--ion-color-step-400);
+    margin: 0;
+    font-size: 0.9rem;
+  }
 }
-ion-fab-button {
-    --background: var(--ion-color-primary);
-    margin-bottom: 16px;
-    margin-right: 16px;
+
+.secure-file-list {
+  background: transparent;
+  width: 100%;
+  padding: 0 16px;
+
+  .file-item {
+    --background: var(--ion-card-background);
+    --border-radius: 12px;
+    margin-bottom: 12px;
+    --padding-start: 12px;
+    --inner-padding-end: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    .icon-wrapper {
+      background: rgba(var(--ion-color-primary-rgb), 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      margin-right: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      ion-icon {
+        font-size: 24px;
+      }
+    }
+
+    h3 {
+      font-weight: 600;
+      color: var(--ion-text-color);
+      font-size: 1rem;
+      margin-bottom: 4px;
+      /* Truncate long filenames */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+    }
+
+    p {
+      color: var(--ion-color-success); /* Secure green text */
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .lock-icon {
+      color: var(--ion-color-step-600);
+      font-size: 20px;
+    }
+  }
 }
