@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+
 import { IonContent, IonButton, IonIcon, AlertController,ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { fingerPrintOutline, lockClosedOutline } from 'ionicons/icons';
@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
   templateUrl: 'lock-screen.component.html',
   styleUrls: ['lock-screen.component.scss'],
   standalone: true,
-  imports: [IonicModule]
+  imports: [IonContent, IonButton, IonIcon]
 })
 export class LockScreenComponent implements OnInit {
 
@@ -72,6 +72,8 @@ export class LockScreenComponent implements OnInit {
             if (data.pin && data.pin.length === 4) {
               await this.authService.setPin(data.pin);
               this.authService.unlock();
+              // Tell the global state the user is authenticated so the guard lets them pass
+              this.authState.login();
               this.router.navigate(['/tabs'], { replaceUrl: true }); // Prevent back navigation to lock screen
             }
             return true;
@@ -96,6 +98,8 @@ export class LockScreenComponent implements OnInit {
             const isValid = await this.authService.verifyPin(data.pin);
             if (isValid) {
               this.authService.unlock();
+               // Tell the global state the user is authenticated so the guard lets them pass
+              this.authState.login();
               this.router.navigate(['/tabs'], { replaceUrl: true }); // Prevent back navigation to lock screen
             } else {
               console.error('Invalid PIN entered');

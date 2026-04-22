@@ -1,18 +1,66 @@
 <ion-content class="ion-no-padding">
-  <div class="safe-padding" style="height: 100%; display: flex; flex-direction: column;">
-    
-    @if (documentPreview()) {
-      <div class="preview-container">
-        <img [src]="'data:image/jpeg;base64,' + documentPreview()" alt="Scanned Document" />
-      </div>
-    } @else {
+  <div class="safe-padding vault-container">
+
+    <div class="vault-header">
+      <h2>My Secure Documents</h2><br/>
+      @if (!isLoadingVault() && !isProcessing()) {
+        <p>{{ vaultFiles().length }} Encrypted Files</p>
+      } @else {
+        <p><ion-skeleton-text animated style="width: 100px"></ion-skeleton-text></p>
+      }
+    </div>
+
+    @if (isLoadingVault()) {
+      <ion-list class="secure-file-list" lines="none">
+        @for (i of [1, 2, 3]; track i) {
+          <ion-item class="file-item disabled-item">
+            <div slot="start" class="icon-wrapper skeleton-icon">
+              <ion-skeleton-text animated style="width: 100%; height: 100%;"></ion-skeleton-text>
+            </div>
+            <ion-label>
+              <h3><ion-skeleton-text animated style="width: 70%"></ion-skeleton-text></h3>
+              <p><ion-skeleton-text animated style="width: 40%"></ion-skeleton-text></p>
+            </ion-label>
+          </ion-item>
+        }
+      </ion-list>
+    }<!-- End of isLoadingVault if condition -->
+
+    @if (!isLoadingVault() && vaultFiles().length > 0 && !isProcessing()) {
+      <ion-list class="secure-file-list" lines="none">
+        @for (file of vaultFiles(); track file.name) {
+          <ion-item button detail="true" (click)="openSecureDocument(file)" class="file-item">
+            <div slot="start" class="icon-wrapper">
+              <ion-icon name="document-text-outline" color="primary"></ion-icon>
+            </div>
+            <ion-label>
+              <h3>{{ file.name }}</h3>
+              <p>AES-256 Encrypted</p>
+            </ion-label>
+            <ion-icon name="document-lock-outline" slot="end" class="lock-icon"></ion-icon>
+          </ion-item>
+        }
+      </ion-list>
+    }<!-- End of if-block for vault files present condition -->
+
+
+    @if (!isLoadingVault() && (vaultFiles().length === 0 || isProcessing())) {
       <div class="empty-state">
-        <p>Your secure vault is empty.</p>
+        @if (isProcessing()) {
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <p class="status-text">Encrypting and locking document...</p>
+        } @else {
+          <div class="empty-icon-container">
+            <ion-icon name="document-lock-outline" color="medium"></ion-icon>
+          </div>
+          <p class="empty-text">Your secure vault is empty.</p>
+        }
       </div>
     }
 
-    <ion-fab vertical="bottom" horizontal="end" slot="fixed" class="safe-absolute-bottom">
-      <ion-fab-button (click)="triggerScanner()" color="primary">
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end" class="safe-absolute-bottom fab-padding">
+      <ion-fab-button color="primary"
+        (click)="captureAndSecureDocument()" [disabled]="isProcessing() || isLoadingVault()">
         <ion-icon name="camera-outline"></ion-icon>
       </ion-fab-button>
     </ion-fab>

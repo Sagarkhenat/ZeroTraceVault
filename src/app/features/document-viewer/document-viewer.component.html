@@ -1,0 +1,31 @@
+<ion-header class="ion-no-border custom-secure-header">
+  <ion-toolbar color="secondary">
+    <ion-title>Secure Viewer</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-no-padding" color="dark">
+  <div class="viewer-container safe-padding-y">
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <p>Decrypting document...</p>
+      </div>
+    }
+
+    @if (!isLoading() && safePdfUrl()) {
+      <iframe
+        [src]="safePdfUrl()"
+        class="pdf-frame"
+        frameborder="0"
+        allowfullscreen>
+      </iframe>
+    }
+  </div>
+</ion-content>
