@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
+
 import { IonContent, IonButton, IonIcon, AlertController,ToastController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { fingerPrintOutline, lockClosedOutline } from 'ionicons/icons';
@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
   templateUrl: 'lock-screen.component.html',
   styleUrls: ['lock-screen.component.scss'],
   standalone: true,
-  imports: [IonicModule]
+  imports: [IonContent, IonButton, IonIcon]
 })
 export class LockScreenComponent implements OnInit {
 

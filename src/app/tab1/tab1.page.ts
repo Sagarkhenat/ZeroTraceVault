@@ -1,7 +1,8 @@
 import { Component, signal, inject } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
-import { ToastController,ModalController } from '@ionic/angular/standalone';
-
+// import { IonicModule } from '@ionic/angular';
+import { IonContent, IonList, IonItem, IonLabel, IonIcon,
+  IonSpinner, IonFab, IonFabButton, ToastController, ModalController,IonSkeletonText} from '@ionic/angular/standalone';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { addIcons } from 'ionicons';
 import { cameraOutline, documentLockOutline, documentTextOutline } from 'ionicons/icons';
 
@@ -16,13 +17,15 @@ import { DocumentViewerComponent } from '../features/document-viewer/document-vi
   templateUrl: './tab1.page.html',
   styleUrls: ['./tab1.page.scss'],
   standalone: true,
-  imports: [IonicModule],
+  imports: [IonContent, IonList, IonItem, IonLabel, IonIcon,
+  IonSpinner, IonFab, IonFabButton,IonSkeletonText],
 })
 export class Tab1Page {
 
   // The volatile RAM buffers
   public documentPreview = signal<string | null>(null);
   public isProcessing = signal<boolean>(false);
+  public isLoadingVault = signal<boolean>(true); // Track disk read state
   public errorMessage = signal<string | null>(null); // For graceful UI error states
   vaultFiles = signal<any[]>([]); // New signal to hold the file list
 
@@ -38,11 +41,21 @@ export class Tab1Page {
   }
 
   async loadFiles() {
-    const files = await this.filesystemService.listVaultFiles();
-    this.vaultFiles.set(files);
+
+    this.isLoadingVault.set(true); // Trigger skeleton loaders
+    try {
+      const files = await this.filesystemService.listVaultFiles();
+      this.vaultFiles.set(files);
+    } finally {
+      // Add a tiny artificial delay to ensure the UI transition is smooth
+      setTimeout(() => this.isLoadingVault.set(false), 300);
+    }
   }
 
   async captureAndSecureDocument() {
+
+    await Haptics.impact({ style: ImpactStyle.Light });
+
     this.isProcessing.set(true);
 
     // 1. Declare sensitive variables OUTSIDE the try block.
@@ -80,11 +93,19 @@ export class Tab1Page {
 
       const savedPath = await this.filesystemService.saveEncryptedDocument(fileName, cipherText);
 
+      // Refresh the volatile RAM state with the new disk data
+      await this.loadFiles();
+
+      // Tactile Success Feedback
+      await Haptics.notification({ type: NotificationType.Success });
       this.showToast('Document securely locked in vault.', 'success');
-      console.log('ZeroTrace write successful at:', savedPath);
+      console.log('ZeroTrace file write successful at this location :::', savedPath);
 
     } catch (error: any) {
       console.error('Vault Security Pipeline Exception:', error);
+
+      // Tactile Error Feedback
+      await Haptics.notification({ type: NotificationType.Error });
 
       // Handle potential out-of-storage or write-permission errors explicitly
       const errorMessage = error.message?.includes('disk') || error.message?.includes('space')
@@ -94,9 +115,8 @@ export class Tab1Page {
       this.showToast(errorMessage, 'danger');
 
     } finally {
-      // =========================================================================
+
       // ZERO-TRACE MEMORY MANAGEMENT (GUARANTEED EXECUTION)
-      // =========================================================================
       this.isProcessing.set(false);
 
       // 1. Nullify raw camera string to trigger garbage collection
@@ -118,6 +138,10 @@ export class Tab1Page {
   }
 
   async openSecureDocument(file: any) {
+
+    await Haptics.impact({ style: ImpactStyle.Light });
+    console.log('Inside open secure document filename value passed :::', file);
+
     const modal = await this.modalCtrl.create({
       component: DocumentViewerComponent,
       componentProps: {
