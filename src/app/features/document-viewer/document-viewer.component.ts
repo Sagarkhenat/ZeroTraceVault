@@ -63,11 +63,16 @@ export class DocumentViewerComponent implements OnDestroy {
       // Convert the byte array to a temporary browser Blob using the local reference
       const blob = new Blob([bytesArray as any], { type: 'application/pdf' });
 
-      // FActually generate the volatile Object URL and store it locally first
+      console.log('generated blob value :::', blob);
+
+      // Generate the volatile Object URL and store it locally first
       const generatedUrl = URL.createObjectURL(blob);
+
+      console.log('generated URL value for showing the blob data as pdf :::', generatedUrl);
 
       // Save it to the class property so ngOnDestroy can revoke it later
       this.objectUrl = generatedUrl;
+
 
       // Bypass Angular's strict security using the guaranteed string
       this.safePdfUrl.set(this.sanitizer.bypassSecurityTrustResourceUrl(generatedUrl));
@@ -86,8 +91,8 @@ export class DocumentViewerComponent implements OnDestroy {
   }
 
   /**
-   * CRITICAL: Zero-Trace Cleanup Lifecycle
-   * This guarantees that when the modal is destroyed, the unencrypted
+   * Zero-Trace Cleanup Lifecycle
+   * When the modal is destroyed, the unencrypted
    * document is wiped from the device's volatile memory.
    */
   ngOnDestroy() {

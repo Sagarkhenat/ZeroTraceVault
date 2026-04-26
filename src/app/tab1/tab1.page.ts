@@ -1,5 +1,4 @@
 import { Component, signal, inject } from '@angular/core';
-// import { IonicModule } from '@ionic/angular';
 import { IonContent, IonList, IonItem, IonLabel, IonIcon,
   IonSpinner, IonFab, IonFabButton, ToastController, ModalController,IonSkeletonText} from '@ionic/angular/standalone';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
@@ -58,37 +57,38 @@ export class Tab1Page {
 
     this.isProcessing.set(true);
 
-    // 1. Declare sensitive variables OUTSIDE the try block.
-    // This is mandatory so the 'finally' block can access and destroy them if the try block crashes.
+    // Declaring the sensitive variables OUTSIDE the try block,
+    // so the 'finally' block can access and destroy them if the try block crashes
     let rawImageBase64: string | null = null;
     let unencryptedPdfBytes: Uint8Array | null = null;
     let cipherText: string | null = null;
 
     try {
-      // Stage 1: Capture Volatile Image
+      // Capture Volatile Image
       rawImageBase64 = await this.scannerService.captureDocument();
       if (!rawImageBase64) {
-        // The user cancelled the camera UI. Exit gracefully without an error.
+        // The user cancelled the camera UI
         return;
       }
       this.showToast('Compiling secure document...', 'primary');
 
-      // Stage 2: Compile to Unencrypted PDF
+      // Compile to Unencrypted PDF
       unencryptedPdfBytes = await this.pdfProcessor.createPdfFromImage(rawImageBase64);
       if (!unencryptedPdfBytes || unencryptedPdfBytes.length === 0) {
           throw new Error('PDF Compiler returned an empty buffer.');
       }
 
-      // Stage 3: Encrypt in Memory
+      // Encrypt in Memory
       this.showToast('Applying AES-256 encryption...', 'primary');
       cipherText = await this.encryptionService.encryptPdfBytes(unencryptedPdfBytes);
       if (!cipherText) {
         throw new Error('Encryption engine failed to produce valid ciphertext.');
       }
 
-      // Stage 4: Write to Sandboxed Disk
+      // Write to Sandboxed Disk
       this.showToast('Writing to secure local vault...', 'primary');
-      // Generate a highly unique filename to prevent overwrite collisions
+
+      // Generate an  unique filename to prevent overwrite collisions
       const fileName = `secure_doc_${new Date().getTime()}_${Math.floor(Math.random() * 1000)}.enc`;
 
       const savedPath = await this.filesystemService.saveEncryptedDocument(fileName, cipherText);
@@ -96,7 +96,7 @@ export class Tab1Page {
       // Refresh the volatile RAM state with the new disk data
       await this.loadFiles();
 
-      // Tactile Success Feedback
+      // Providing Tactile Success Feedback
       await Haptics.notification({ type: NotificationType.Success });
       this.showToast('Document securely locked in vault.', 'success');
       console.log('ZeroTrace file write successful at this location :::', savedPath);
@@ -116,21 +116,21 @@ export class Tab1Page {
 
     } finally {
 
-      // ZERO-TRACE MEMORY MANAGEMENT (GUARANTEED EXECUTION)
+      // Zero-trace memory management
       this.isProcessing.set(false);
 
-      // 1. Nullify raw camera string to trigger garbage collection
+      // Nullify raw camera string to trigger garbage collection
       if (rawImageBase64) {
         rawImageBase64 = null;
       }
 
-      // 2. Mathematically destroy unencrypted PDF bytes (Senior-level mitigation)
+      // Mathematically destroy unencrypted PDF bytes
       if (unencryptedPdfBytes && unencryptedPdfBytes.length > 0) {
         unencryptedPdfBytes.fill(0); // Overwrite the actual RAM addresses with zeros
         unencryptedPdfBytes = null;
       }
 
-      // 3. Nullify ciphertext string
+      // Nullify ciphertext string
       if (cipherText) {
         cipherText = null;
       }
